@@ -102,6 +102,7 @@ const Bar = props => {
         onClick,
         onMouseEnter,
         onMouseLeave,
+        axisTooltip,
 
         legends,
 
@@ -259,6 +260,10 @@ const Bar = props => {
                             right={axisRight}
                             bottom={axisBottom}
                             left={axisLeft}
+                            showTooltip={showTooltip}
+                            hideTooltip={hideTooltip}
+                            axisTooltip={axisTooltip}
+                            {...motionProps}
                         />
                     ),
                     bars,
