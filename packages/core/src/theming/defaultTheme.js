@@ -30,6 +30,9 @@ export const defaultTheme = {
                 fontSize: 12,
             },
         },
+        hoverPanel: {
+
+        }
     },
     grid: {
         line: {

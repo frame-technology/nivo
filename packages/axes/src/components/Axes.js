@@ -10,11 +10,36 @@ import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 import Axis from './Axis'
 import { axisPropType } from '../props'
+import HoverPanel from "./HoverPanel";
 
 const positions = ['top', 'right', 'bottom', 'left']
 
-const Axes = ({ xScale, yScale, width, height, top, right, bottom, left }) => {
+const Axes = ({ xScale, yScale, width, height, top, right, bottom, left, axisTooltip, tooltipFormat, showTooltip, hideTooltip, theme }) => {
     const axes = { top, right, bottom, left }
+
+    let [handleNodeHover, moveHoverPanel, hideHover] = [function() {}, function() {}, function() {}];
+    if (axisTooltip) {
+        handleNodeHover = (showTooltip, event) => {
+            showTooltip(
+                <HoverPanel
+                    node={{value: event.target.textContent, xKey: event.x, yKey: event.y, color: "#ffffff"}}
+                    theme={theme}
+                    format={tooltipFormat}
+                    tooltip={axisTooltip}
+                />,
+                event
+            )
+        }
+
+        moveHoverPanel = (e) => {
+            handleNodeHover(showTooltip, e)
+        }
+
+        hideHover = () => {
+            hideTooltip();
+        }
+    }
+
 
     return positions.map(position => {
         const axis = axes[position]
@@ -34,7 +59,11 @@ const Axes = ({ xScale, yScale, width, height, top, right, bottom, left }) => {
                 scale={isXAxis ? xScale : yScale}
                 length={isXAxis ? width : height}
                 ticksPosition={ticksPosition}
+                axisTooltip={axisTooltip}
+                moveHoverPanel={moveHoverPanel}
+                hideHover={hideHover}
             />
+
         )
     })
 }
@@ -48,6 +77,11 @@ Axes.propTypes = {
     right: axisPropType,
     bottom: axisPropType,
     left: axisPropType,
+    axisTooltip: PropTypes.func,
+    tooltipFormat: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+    showTooltip: PropTypes.func,
+    hideTooltip: PropTypes.func,
+    theme: PropTypes.object
 }
 
 export default memo(Axes)

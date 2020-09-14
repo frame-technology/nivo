@@ -50,6 +50,7 @@ const HeatMap = ({
     cellHoverOthersOpacity,
     tooltipFormat,
     tooltip,
+    axisTooltip
 }) => {
     const { margin, innerWidth, innerHeight, outerWidth, outerHeight } = useDimensions(
         width,
@@ -100,6 +101,13 @@ const HeatMap = ({
         [setCurrentCellId, showTooltipFromEvent, tooltipFormat, tooltip]
     )
 
+    let showAxisTooltip = function() {}
+    if (axisTooltip) {
+        showAxisTooltip = useCallback((event) => {
+            showTooltipFromEvent(<HeatMapCellTooltip cell={""} tooltip={axisTooltip} />, event)
+        })
+    }
+
     const handleCellLeave = useCallback(() => {
         setCurrentCellId(null)
         hideTooltip()
@@ -138,6 +146,10 @@ const HeatMap = ({
                 right={axisRight}
                 bottom={axisBottom}
                 left={axisLeft}
+                showTooltip={showAxisTooltip}
+                hideTooltip={hideTooltip}
+                axisTooltip={axisTooltip}
+
             />
             <HeatMapCells
                 cells={cells}

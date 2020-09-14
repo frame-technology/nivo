@@ -33,6 +33,9 @@ const Axis = ({
     legendPosition,
     legendOffset,
     onClick,
+    axisTooltip,
+    moveHoverPanel,
+    hideHover
 }) => {
     const theme = useTheme()
 
@@ -145,6 +148,9 @@ const Axis = ({
                     ...tick,
                     ...(onClick ? { onClick } : {}),
                     key,
+                    moveHoverPanel,
+                    axisTooltip,
+                    hideHover
                 })
             })}
             <animated.line
@@ -176,6 +182,10 @@ Axis.propTypes = {
     legendPosition: PropTypes.oneOf(['start', 'middle', 'end']).isRequired,
     legendOffset: PropTypes.number.isRequired,
     onClick: PropTypes.func,
+    axisTooltip: PropTypes.func,
+    tooltipFormat: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+    moveHoverPanel: PropTypes.func,
+    hideHover: PropTypes.func
 }
 Axis.defaultProps = {
     x: 0,

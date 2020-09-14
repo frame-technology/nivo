@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import React, { memo } from 'react'
+import React, { memo, useEffect } from 'react'
 import { animated } from 'react-spring'
 import PropTypes from 'prop-types'
 import { useTheme } from '@nivo/core'
@@ -20,9 +20,43 @@ const AxisTick = ({
     textBaseline,
     textAnchor,
     animatedProps,
+    axisTooltip,
+    moveHoverPanel,
+    hideHover
 }) => {
     const theme = useTheme()
 
+    const clearHoverTracking = () => {
+        hideHover && hideHover()
+        this._tickText.removeEventListener("mousemove", this.moveHoverPanel);
+    }
+
+    const moveHoverPanelFunc = (e) => {
+        moveHoverPanel && moveHoverPanel(e);
+    }
+
+    const showHoverPanel = (e) => {
+        this._tickText.addEventListener("mousemove", moveHoverPanelFunc);
+        moveHoverPanelFunc(e);
+    }
+
+    const setUpListener = () => {
+        this._tickText.addEventListener("mouseover", showHoverPanel);
+        this._tickText.addEventListener("mouseout", clearHoverTracking)
+    }
+    const removeListeners = () => {
+        this._tickText.removeEventListener("mouseover", showHoverPanel);
+        this._tickText.removeEventListener("mouseout", clearHoverTracking);
+    }
+
+    useEffect(() => {
+        if (axisTooltip) {
+            const uniqName = `${value}${lineX}${lineY}`
+            this._tickText = document.getElementById(uniqName)
+            setUpListener()
+            return removeListeners
+        }
+    }, [lineX, lineY])
     let value = _value
     if (format !== undefined) {
         value = format(value)
@@ -45,6 +79,7 @@ const AxisTick = ({
                 textAnchor={textAnchor}
                 transform={animatedProps.textTransform}
                 style={theme.axis.ticks.text}
+                id={`${value}${lineX}${lineY}`}
             >
                 {value}
             </animated.text>
@@ -68,6 +103,9 @@ AxisTick.propTypes = {
     rotate: PropTypes.number.isRequired,
     onClick: PropTypes.func,
     animatedProps: PropTypes.object.isRequired,
+    axisTooltip: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    moveHoverPanel: PropTypes.func,
+    hideHover: PropTypes.func
 }
 AxisTick.defaultProps = {
     opacity: 1,
