@@ -109,7 +109,7 @@ AxisTick.propTypes = {
 }
 AxisTick.defaultProps = {
     opacity: 1,
-    rotate: 0,
+    rotate: 0
 }
 
 export default memo(AxisTick)
