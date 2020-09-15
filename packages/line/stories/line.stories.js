@@ -856,6 +856,42 @@ stories.add('custom tooltip', () => (
     />
 ))
 
+stories.add(
+    'custom dot tooltip',
+    <Line
+        {...commonProperties}
+        enableStackTooltip={false}
+        curve={select('curve', curveOptions, 'linear')}
+        yScale={{
+            type: 'linear',
+            stacked: boolean('stacked', true),
+        }}
+        enableDotTooltip={true}
+        tooltip={dot => (
+            <div style={{ margin: 'auto', display: 'flex' }}>
+                <span
+                    style={{
+                        background: dot.color,
+                        padding: '5px',
+                        margin: 'auto 5px auto 0',
+                        height: '0px',
+                        display: 'block',
+                    }}
+                />
+                <span style={{ marginRight: '3px' }}>{`${dot.value}(${dot.xVal}):`}</span>
+                <span>{dot.yValStacked}</span>
+            </div>
+        )}
+        theme={{
+            tooltip: {
+                container: {
+                    background: '#fff',
+                },
+            },
+        }}
+    />
+)
+
 const AreaLayer = ({ series, xScale, yScale, innerHeight }) => {
     const areaGenerator = area()
         .x(d => xScale(d.data.x))

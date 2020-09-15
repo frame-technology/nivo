@@ -9,13 +9,13 @@
 import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 
-const DotsItemSymbol = ({ size, color, borderWidth, borderColor }) => (
+const DotsItemSymbol = ({ size, color, borderWidth, borderColor, hoverable }) => (
     <circle
         r={size / 2}
         fill={color}
         stroke={borderColor}
         strokeWidth={borderWidth}
-        style={{ pointerEvents: 'none' }}
+        style={{ pointerEvents: hoverable ? 'auto' : 'none' }}
     />
 )
 

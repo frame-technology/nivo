@@ -18,7 +18,7 @@ import {
 import { useInheritedColor } from '@nivo/colors'
 import { Axes, Grid } from '@nivo/axes'
 import { BoxLegendSvg } from '@nivo/legends'
-import { Crosshair } from '@nivo/tooltip'
+import { Crosshair, useTooltip } from '@nivo/tooltip'
 import { useLine } from './hooks'
 import { LinePropTypes, LineDefaultProps } from './props'
 import Areas from './Areas'
@@ -26,8 +26,10 @@ import Lines from './Lines'
 import Slices from './Slices'
 import Points from './Points'
 import Mesh from './Mesh'
+import HoverPanel from './HoverPanel'
 
 const Line = props => {
+
     const {
         data,
         xScale: xScaleSpec,
@@ -93,13 +95,60 @@ const Line = props => {
 
         enableCrosshair,
         crosshairType,
+        highlightLines
+
     } = props
+    const [ highlightedLines, setHighlighting ] = useState({})
+    const setHighlightedLines = (key, isHighlighted) => {
+        setHighlighting({...highlightedLines, [key]: isHighlighted})
+    }
+    const { showTooltipFromEvent, hideTooltip } = useTooltip()
+
 
     const { margin, innerWidth, innerHeight, outerWidth, outerHeight } = useDimensions(
         width,
         height,
         partialMargin
     )
+
+    const setHover = (event, node, isHovered) => {
+        if (isHovered) {
+            handleHover(event, node)
+        } else {
+            handleHide(node)
+        }
+    }
+
+    const handleNodeHover = (showTooltip, event, node) => {
+        const { theme, tooltipFormat, tooltip } = this.props
+        showTooltip(
+            <HoverPanel
+                node={{
+                    value: node.id,
+                    yValStacked: node.data.yStacked,
+                    yVal: node.data.y,
+                    xVal: node.data.x,
+                    xKey: event.x,
+                    yKey: event.y,
+                    color: node.color || '#ffffff',
+                }}
+                theme={theme}
+                format={tooltipFormat}
+                tooltip={tooltip}
+            />,
+            event
+        )
+    }
+
+    const handleHover = (event, node) => {
+        handleNodeHover(showTooltipFromEvent, event, node)
+        setHighlightedLines(node.id, true)
+    }
+
+    const handleHide = (node) => {
+        hideTooltip()
+        setHighlightedLines(node.id, false)
+    }
 
     const { lineGenerator, areaGenerator, series, xScale, yScale, slices, points } = useLine({
         data,
@@ -176,7 +225,7 @@ const Line = props => {
         ),
         areas: null,
         lines: (
-            <Lines key="lines" lines={series} lineGenerator={lineGenerator} lineWidth={lineWidth} />
+            <Lines key="lines" lines={series} highlightedLines={highlightedLines} lineGenerator={lineGenerator} lineWidth={lineWidth} />
         ),
         slices: null,
         points: null,
@@ -236,6 +285,8 @@ const Line = props => {
                 enableLabel={enablePointLabel}
                 label={pointLabel}
                 labelYOffset={pointLabelYOffset}
+                setHighlightedLines={highlightLines ? setHighlightedLines : function() {}}
+                setHover={setHover}
             />
         )
     }

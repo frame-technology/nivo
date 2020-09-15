@@ -10,7 +10,7 @@ import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 import LinesItem from './LinesItem'
 
-const Lines = ({ lines, lineGenerator, lineWidth }) => {
+const Lines = ({ lines, lineGenerator, lineWidth, highlightedLines }) => {
     return lines
         .reverse()
         .map(({ id, data, color }) => (
@@ -20,7 +20,7 @@ const Lines = ({ lines, lineGenerator, lineWidth }) => {
                 points={data.map(d => d.position)}
                 lineGenerator={lineGenerator}
                 color={color}
-                thickness={lineWidth}
+                thickness={highlightedLines[id] ? lineWidth + 1 : lineWidth}
             />
         ))
 }
