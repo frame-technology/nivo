@@ -56,9 +56,9 @@ const RadarDots = ({
                             ),
                         },
                         data: pointData,
+                        fullData: datum
                     })
                 })
-
                 return acc
             }, []),
         [
@@ -115,7 +115,7 @@ RadarDots.defaultProps = {
     borderWidth: 0,
     borderColor: { from: 'color' },
     enableLabel: false,
-    label: 'value',
+    label: 'value'
 }
 
 export default RadarDots
