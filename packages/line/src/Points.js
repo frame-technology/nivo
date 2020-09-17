@@ -10,7 +10,7 @@ import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 import { getLabelGenerator, DotsItem, useTheme } from '@nivo/core'
 
-const Points = ({ points, symbol, size, borderWidth, enableLabel, label, labelYOffset }) => {
+const Points = ({ points, symbol, size, borderWidth, enableLabel, label, labelYOffset, setHover, enableDotHover }) => {
     const theme = useTheme()
     const getLabel = getLabelGenerator(label)
 
@@ -25,6 +25,7 @@ const Points = ({ points, symbol, size, borderWidth, enableLabel, label, labelYO
             y: point.y,
             datum: point.data,
             fill: point.color,
+            serieId: point.serieId,
             stroke: point.borderColor,
             label: enableLabel ? getLabel(point.data) : null,
         }
@@ -37,6 +38,7 @@ const Points = ({ points, symbol, size, borderWidth, enableLabel, label, labelYO
             {mappedPoints.map(point => (
                 <DotsItem
                     key={point.id}
+                    id={point.serieId}
                     x={point.x}
                     y={point.y}
                     datum={point.datum}
@@ -48,6 +50,8 @@ const Points = ({ points, symbol, size, borderWidth, enableLabel, label, labelYO
                     label={point.label}
                     labelYOffset={labelYOffset}
                     theme={theme}
+                    setHover={setHover}
+                    enableDotHover={enableDotHover}
                 />
             ))}
         </g>
@@ -64,6 +68,8 @@ Points.propTypes = {
     enableLabel: PropTypes.bool.isRequired,
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
     labelYOffset: PropTypes.number,
+    setHover: PropTypes.func,
+    enableDotHover: PropTypes.bool
 }
 
 export default memo(Points)

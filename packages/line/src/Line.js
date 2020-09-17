@@ -93,6 +93,8 @@ const Line = props => {
         debugSlices,
         sliceTooltip,
 
+        enableDotTooltip,
+
         enableCrosshair,
         crosshairType,
         highlightLines
@@ -120,24 +122,26 @@ const Line = props => {
     }
 
     const handleNodeHover = (showTooltip, event, node) => {
-        const { theme, tooltipFormat, tooltip } = this.props
-        showTooltip(
-            <HoverPanel
-                node={{
-                    value: node.id,
-                    yValStacked: node.data.yStacked,
-                    yVal: node.data.y,
-                    xVal: node.data.x,
-                    xKey: event.x,
-                    yKey: event.y,
-                    color: node.color || '#ffffff',
-                }}
-                theme={theme}
-                format={tooltipFormat}
-                tooltip={tooltip}
-            />,
-            event
-        )
+        const { theme, tooltipFormat, tooltip } = props
+        if (enableDotTooltip) {
+            showTooltip(
+                <HoverPanel
+                    node={{
+                        value: node.id,
+                        yValStacked: node.yStacked,
+                        yVal: node.y,
+                        xVal: node.x,
+                        xKey: event.x,
+                        yKey: event.y,
+                        color: node.color || '#ffffff',
+                    }}
+                    theme={theme}
+                    format={tooltipFormat}
+                    tooltip={tooltip}
+                />,
+                event
+            )
+        }
     }
 
     const handleHover = (event, node) => {
@@ -149,6 +153,7 @@ const Line = props => {
         hideTooltip()
         setHighlightedLines(node.id, false)
     }
+
 
     const { lineGenerator, areaGenerator, series, xScale, yScale, slices, points } = useLine({
         data,
@@ -287,6 +292,7 @@ const Line = props => {
                 labelYOffset={pointLabelYOffset}
                 setHighlightedLines={highlightLines ? setHighlightedLines : function() {}}
                 setHover={setHover}
+                enableDotHover={!!(setHover || enableDotTooltip)}
             />
         )
     }

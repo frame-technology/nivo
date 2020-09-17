@@ -24,6 +24,7 @@ DotsItemSymbol.propTypes = {
     color: PropTypes.string.isRequired,
     borderWidth: PropTypes.number.isRequired,
     borderColor: PropTypes.string.isRequired,
+    hoverable: PropTypes.bool
 }
 
 export default memo(DotsItemSymbol)

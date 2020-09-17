@@ -858,9 +858,10 @@ stories.add('custom tooltip', () => (
 
 stories.add(
     'custom dot tooltip',
-    <Line
+    () => <Line
         {...commonProperties}
         enableStackTooltip={false}
+        enableSlices={false}
         curve={select('curve', curveOptions, 'linear')}
         yScale={{
             type: 'linear',

@@ -109,14 +109,14 @@ stories.add('with formatted values per key', () => (
 
 stories.add(
     'with dot size function',
-    withInfo()(() => (
+    () => (
         <Radar
             {...commonProperties}
             dotSize={(point) => {
                 return point.data.value / 10
             }}
         />
-    ))
+    )
 )
 
 const LabelComponent = ({ id, anchor }) => (

@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import React, { memo, useEffect } from 'react'
+import React, { memo, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { useSpring, animated } from 'react-spring'
 import { dotsThemePropType } from '../../theming'
@@ -16,6 +16,7 @@ import DotsItemSymbol from './DotsItemSymbol'
 const DotsItem = ({
     x,
     y,
+    id,
     symbol,
     size,
     datum,
@@ -26,7 +27,8 @@ const DotsItem = ({
     labelTextAnchor,
     labelYOffset,
     theme,
-    setHover
+    setHover,
+    enableDotHover
 }) => {
     const { animate, config: springConfig } = useMotionConfig()
 
@@ -35,50 +37,49 @@ const DotsItem = ({
         config: springConfig,
         immediate: !animate,
     })
+
+    const _dotSymbol = useRef(null)
+
     const clearHoverTracking = () => {
         setHover && setHover(null, datum, false)
-        this._dotSymbol.current.removeEventListener("mousemove", moveHoverPanel);
+        _dotSymbol.current.removeEventListener("mousemove", moveHoverPanel)
     }
 
     const moveHoverPanel = (e) => {
-        setHover(e, {...datum, color}, true);
+        setHover(e, {...datum, id, color}, true)
     }
 
     const showHoverPanel = (e) => {
-        this._dotSymbol.current.addEventListener("mousemove", moveHoverPanel);
+        _dotSymbol.current.addEventListener("mousemove", moveHoverPanel)
         moveHoverPanel(e);
     }
 
     const setUpListener = () => {
-        this._dotSymbol.current.addEventListener("mouseover", showHoverPanel);
-        this._dotSymbol.current.addEventListener("mouseout", clearHoverTracking)
+        _dotSymbol.current.addEventListener("mouseover", showHoverPanel)
+        _dotSymbol.current.addEventListener("mouseout", clearHoverTracking)
     }
     const removeListeners = () => {
-        this._dotSymbol.current.removeEventListener("mouseover", showHoverPanel);
-        this._dotSymbol.current.removeEventListener("mouseout", clearHoverTracking);
+        _dotSymbol.current.removeEventListener("mouseover", showHoverPanel)
+        _dotSymbol.current.removeEventListener("mouseout", clearHoverTracking)
     }
 
     useEffect(() => {
-        if (!this._dotSymbol) {
-            this._dotSymbol = React.createRef();
-        }
-    }, [])
-
-    useEffect(() => {
-        if (setHover && this._dotSymbol.current) {
+        if (setHover && _dotSymbol.current) {
             setUpListener()
             return removeListeners
         }
     }, [])
 
+
     return (
-        <animated.g transform={animatedProps.transform} style={{ pointerEvents: 'none' }} ref={this._dotSymbol}>
+        <animated.g transform={animatedProps.transform} style={{ pointerEvents: 'none' }} ref={_dotSymbol}>
             {React.createElement(symbol, {
                 size,
                 color,
                 datum,
                 borderWidth,
                 borderColor,
+                hoverable: enableDotHover || false
             })}
             {label && (
                 <text textAnchor={labelTextAnchor} y={labelYOffset} style={theme.dots.text}>
@@ -93,6 +94,7 @@ DotsItem.propTypes = {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
     datum: PropTypes.object.isRequired,
+    id: PropTypes.string,
 
     size: PropTypes.number.isRequired,
     color: PropTypes.string.isRequired,
@@ -108,7 +110,8 @@ DotsItem.propTypes = {
     theme: PropTypes.shape({
         dots: dotsThemePropType.isRequired,
     }).isRequired,
-    setHover: PropTypes.func,
+    enableDotHover: PropTypes.bool,
+    setHover: PropTypes.func
 }
 
 export const DotsItemDefaultProps = {
@@ -116,6 +119,7 @@ export const DotsItemDefaultProps = {
 
     labelTextAnchor: 'middle',
     labelYOffset: -12,
+    enableDotHover: false
 }
 
 DotsItem.defaultProps = DotsItemDefaultProps
