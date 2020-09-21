@@ -103,9 +103,9 @@ const HeatMap = ({
 
     let showAxisTooltip = function() {}
     if (axisTooltip) {
-        showAxisTooltip = useCallback((event) => {
-            showTooltipFromEvent(<HeatMapCellTooltip cell={""} tooltip={axisTooltip} />, event)
-        })
+        showAxisTooltip = (event, hoverTooltip) => {
+            showTooltipFromEvent(hoverTooltip, event);
+        }
     }
 
     const handleCellLeave = useCallback(() => {

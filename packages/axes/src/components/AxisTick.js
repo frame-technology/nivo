@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-import React, { memo, useEffect } from 'react'
+import React, { memo, useEffect, useRef } from 'react'
 import { animated } from 'react-spring'
 import PropTypes from 'prop-types'
 import { useTheme } from '@nivo/core'
@@ -25,10 +25,11 @@ const AxisTick = ({
     hideHover
 }) => {
     const theme = useTheme()
+    const _tickText = useRef()
 
     const clearHoverTracking = () => {
         hideHover && hideHover()
-        this._tickText.removeEventListener("mousemove", this.moveHoverPanel);
+        _tickText.current.removeEventListener("mousemove", moveHoverPanelFunc);
     }
 
     const moveHoverPanelFunc = (e) => {
@@ -36,23 +37,21 @@ const AxisTick = ({
     }
 
     const showHoverPanel = (e) => {
-        this._tickText.addEventListener("mousemove", moveHoverPanelFunc);
+        _tickText.current.addEventListener("mousemove", moveHoverPanelFunc);
         moveHoverPanelFunc(e);
     }
 
     const setUpListener = () => {
-        this._tickText.addEventListener("mouseover", showHoverPanel);
-        this._tickText.addEventListener("mouseout", clearHoverTracking)
+        _tickText.current.addEventListener("mouseover", showHoverPanel);
+        _tickText.current.addEventListener("mouseout", clearHoverTracking)
     }
     const removeListeners = () => {
-        this._tickText.removeEventListener("mouseover", showHoverPanel);
-        this._tickText.removeEventListener("mouseout", clearHoverTracking);
+        _tickText.current.removeEventListener("mouseover", showHoverPanel);
+        _tickText.current.removeEventListener("mouseout", clearHoverTracking);
     }
 
     useEffect(() => {
-        if (axisTooltip) {
-            const uniqName = `${value}${lineX}${lineY}`
-            this._tickText = document.getElementById(uniqName)
+        if (axisTooltip && _tickText.current) {
             setUpListener()
             return removeListeners
         }
@@ -79,7 +78,7 @@ const AxisTick = ({
                 textAnchor={textAnchor}
                 transform={animatedProps.textTransform}
                 style={theme.axis.ticks.text}
-                id={`${value}${lineX}${lineY}`}
+                ref={_tickText}
             >
                 {value}
             </animated.text>

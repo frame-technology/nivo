@@ -136,6 +136,8 @@ stories.add('custom tooltip', () => (
                 },
             },
         }}
-        axisTooltip={(node) => <span>{node.id}</span>}
+        axisTooltip={(node) => (
+            <span>{node.value}</span>
+        )}
     />
 ))

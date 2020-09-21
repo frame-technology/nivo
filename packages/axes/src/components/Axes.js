@@ -21,13 +21,13 @@ const Axes = ({ xScale, yScale, width, height, top, right, bottom, left, axisToo
     if (axisTooltip) {
         handleNodeHover = (showTooltip, event) => {
             showTooltip(
+                event,
                 <HoverPanel
                     node={{value: event.target.textContent, xKey: event.x, yKey: event.y, color: "#ffffff"}}
                     theme={theme}
                     format={tooltipFormat}
                     tooltip={axisTooltip}
-                />,
-                event
+                />
             )
         }
 
