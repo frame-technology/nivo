@@ -182,6 +182,12 @@ const Bar = props => {
                     tooltip,
                 }
 
+                // The axis tooltip expects showTooltipFromEvent to be used, which reverses these
+                // arguments, so this function acts as a bridge.
+                const showAxisTooltip = (event, component) => {
+                    showTooltip(component, event);
+                }
+
                 let bars
                 if (animate === true) {
                     bars = (
@@ -260,7 +266,7 @@ const Bar = props => {
                             right={axisRight}
                             bottom={axisBottom}
                             left={axisLeft}
-                            showTooltip={showTooltip}
+                            showTooltip={showAxisTooltip}
                             hideTooltip={hideTooltip}
                             axisTooltip={axisTooltip}
                             {...motionProps}
